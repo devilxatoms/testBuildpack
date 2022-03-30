@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+echo "---> Node Buildpack"
+
+# 1. GET ARGS
+layersdir=$1
+
+# 2. CREATE THE LAYER DIRECTORY
+nodelayer="$layersdir"/node
+mkdir -p "$nodelayer"
+
+# 3. DOWNLOAD RUBY
+echo "---> Downloading and extracting Node"
+node_url=http://s3pository.heroku.com/node/v12.18.3/node-v12.18.3-linux-x64.tar.gz
+wget -q -O - "$node_url" | tar -xzf - -C "$nodelayer"
+mv $nodelayer/node-v12.18.3-linux-x64/* $nodelayer
+rm -rf $nodelayer/node-v12.18.3-linux-x64
+chmod +x $nodelayer/bin/*
+
+echo "---> Demo"
+# 4. MAKE NODE AVAILABLE DURING LAUNCH
+echo -e '[types]\nlaunch = true' > "$layersdir/node.toml"
+
+# 5. MAKE NODE AVAILABLE TO THIS SCRIPT
+export PATH="$nodelayer"/bin:$PATH
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH:+${LD_LIBRARY_PATH}:}"$nodelayer/lib"
+
+# 6. INSTALL DEPENDENCIES
+echo "---> Installing Deps"
+npm install
+
+# 8. SET DEFAULT START COMMAND
+cat > "$layersdir/launch.toml" << EOL
+[[processes]]
+type = "web"
+command = "node main.js"
+default = true
+EOL

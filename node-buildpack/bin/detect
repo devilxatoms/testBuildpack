@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+#check that actually app be node.js app to build
+if [[ ! -f package.json ]]; then
+   exit 100
+fi
