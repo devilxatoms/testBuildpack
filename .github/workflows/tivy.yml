@@ -20,7 +20,7 @@ jobs:
       - name: Pack Build
         uses: dfreilich/pack-action@v2.1
         with:
-          args: 'build test-node-app --path ./node-sample-app --buildpack ./node-buildpack --builder paketobuildpacks/builder:base'
+          args: 'build test-node-app --path ./node-sample-app --buildpack ./node-buildpack --builder cnbs/sample-builder:bionic'
 
       # - name: Build image
       #   uses: mamezou-tech/buildpacks-action@master
