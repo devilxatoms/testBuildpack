@@ -17,12 +17,17 @@ jobs:
       #     repository: buildpacks/samples
       #     path: samples/apps/java-maven
 
-      - name: Build image
-        uses: mamezou-tech/buildpacks-action@master
+      - name: Pack Build
+        uses: dfreilich/pack-action@v2
         with:
-          image: "node-app"
-          path: "node-buildpack"
-          builder: "cnbs/sample-builder:alpine"
+          args: 'build test-node-app --path ./node-sample-app --buildpack ./node-buildpack'
+
+      # - name: Build image
+      #   uses: mamezou-tech/buildpacks-action@master
+      #   with:
+      #     image: "node-app"
+      #     path: "node-buildpack"
+      #     builder: "cnbs/sample-builder:alpine"
 
       - name: Run Trivy vulnerability scanner for buildpack
         uses: aquasecurity/trivy-action@master
